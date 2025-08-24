@@ -4,6 +4,7 @@ import { useState , useEffect } from "react";
 import AdminLogin from "./pages/Admin_login";
 import UserLogin from "./pages/User_login";
 import UserDashboard from "./pages/User_dashboard";
+import AdminDashboard from "./pages/Admin_dashboard";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/admin" element={<AdminLogin />} />
       <Route path="/user" element={<UserLogin />} />
       <Route path="/user-dashboard" element={<UserDashboard />} />
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
     </Routes>
   );
 } 
