@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/styles/UserDashboard.css";
 import Logo from "../assets/images/lls_logo.png";
+import EmployeeDetails from "./EmployeeDetails";
+import LeaveRequests from "./LeaveRequests";
+import Performance from "./Performance";
+import HomeSection from "./HomeSection";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -9,6 +13,8 @@ const UserDashboard = () => {
   const [role, setRole] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
+  const [activeSection, setActiveSection] = useState("home");
+  const [loading, setLoading] = useState(true);
 
   // Check user role
   useEffect(() => {
@@ -30,9 +36,13 @@ const UserDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  // Loading animation
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000); // 2 sec loading
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleLogout = () => {
     localStorage.removeItem("userRole");
@@ -49,13 +59,9 @@ const UserDashboard = () => {
             <button className="mobile-menu-btn" onClick={toggleSidebar}>
               &#9776;
             </button>
-            <img
-              src={Logo}
-              alt="Logo"
-              className="header-logo"
-            />
+            <img src={Logo} alt="Logo" className="header-logo" />
             <div>
-              <h1 className="header-title">User Dashboard</h1>
+              <h1 className="header-title">Employee Performance Measure System</h1>
               <span className="header-subtitle">{role.toUpperCase()}</span>
             </div>
           </div>
@@ -72,7 +78,36 @@ const UserDashboard = () => {
           className={`dashboard-sidebar ${sidebarOpen ? "mobile-menu-open" : ""}`}
         >
           <div className="sidebar-menu">
-            <button className="menu-btn active">Home</button>
+            <button
+              className={`menu-btn ${activeSection === "home" ? "active" : ""}`}
+              onClick={() => setActiveSection("home")}
+            >
+              Home
+            </button>
+            <button
+              className={`menu-btn ${
+                activeSection === "employee" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("employee")}
+            >
+              Employee Details
+            </button>
+            <button
+              className={`menu-btn ${
+                activeSection === "leave" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("leave")}
+            >
+              Leave Requests
+            </button>
+            <button
+              className={`menu-btn ${
+                activeSection === "performance" ? "active" : ""
+              }`}
+              onClick={() => setActiveSection("performance")}
+            >
+              Performance
+            </button>
             <button className="menu-btn mobile-logout" onClick={handleLogout}>
               Logout
             </button>
@@ -81,27 +116,22 @@ const UserDashboard = () => {
 
         {/* Content */}
         <main className="dashboard-content">
-          <div className="welcome-container">
-            <div className="welcome-header">
-              <h1>
-                Welcome, <span className="highlight">{username}</span>!
-              </h1>
-              <p className="designation">Glad to see you here.</p>
+          {loading ? (
+            <div className="loading-screen">
+              <h2>👋 Hello {username}!</h2>
+              <p>Loading your dashboard...</p>
+              <div className="spinner"></div>
             </div>
-            <div className="time-display">
-              <span className="date">
-                {dateTime.toLocaleDateString(undefined, {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-              <span className="time">
-                {dateTime.toLocaleTimeString()}
-              </span>
-            </div>
-          </div>
+          ) : (
+            <>
+              {activeSection === "home" && (
+                <HomeSection username={username} dateTime={dateTime} />
+              )}
+              {activeSection === "employee" && <EmployeeDetails />}
+              {activeSection === "leave" && <LeaveRequests />}
+              {activeSection === "performance" && <Performance />}
+            </>
+          )}
         </main>
       </div>
     </div>
